@@ -9,6 +9,8 @@ const errorHandler = (
   err: CustomError,
   _req: Request,
   res: Response,
+  // Express identifies error middleware by its 4 parameters, so _next must stay.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction,
 ): void => {
   const statusCode: number = err.statusCode || 500;
