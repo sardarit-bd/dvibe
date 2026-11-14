@@ -5,11 +5,11 @@ enum RestaurantStatus {
 }
 
 model Restaurant {
-  id             String           @id @default(uuid())
-  ownerId        String           @unique
-  owner          User             @relation(fields: [ownerId], references: [id])
+  id             String            @id @default(uuid())
+  ownerId        String            @unique
+  owner          User              @relation(fields: [ownerId], references: [id])
   name           String
-  slug           String           @unique
+  slug           String            @unique
   description    String?
   address        String
   latitude       Float?
@@ -19,9 +19,11 @@ model Restaurant {
   email          String?
   openingHours   Json?
   coverImage     String?
-  status         RestaurantStatus @default(INACTIVE)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  status         RestaurantStatus  @default(INACTIVE)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
   menuCategories MenuCategory[]
   menuItems      MenuItem[]
+  media          Media[]
+  photos         RestaurantPhoto[]
 }
