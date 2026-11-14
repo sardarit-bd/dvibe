@@ -1,35 +1,36 @@
-import { jest } from "@jest/globals";
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  jest,
+} from "@jest/globals";
 import request from "supertest";
 import jwt from "jsonwebtoken";
 
-jest.mock("../../../../config/database/index.js", () => ({
-  db: {
-    user: { findUnique: jest.fn() },
-    restaurant: {
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
-      findUnique: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-    },
-  },
-}));
+const SECRET = "test-secret";
+process.env.JWT_SECRET = SECRET;
 
-import app from "../../../../app.js";
-import { db } from "../../../../config/database/index.js";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyFn = (...args: any[]) => any;
 
-const mockDb = db as unknown as {
-  user: { findUnique: jest.Mock };
+const mockDb = {
+  user: { findUnique: jest.fn<AnyFn>() },
   restaurant: {
-    findMany: jest.Mock;
-    findFirst: jest.Mock;
-    findUnique: jest.Mock;
-    create: jest.Mock;
-    update: jest.Mock;
-  };
+    findMany: jest.fn<AnyFn>(),
+    findFirst: jest.fn<AnyFn>(),
+    findUnique: jest.fn<AnyFn>(),
+    create: jest.fn<AnyFn>(),
+    update: jest.fn<AnyFn>(),
+  },
 };
 
-const SECRET = "test-secret";
+jest.unstable_mockModule("../../../../config/database/index.js", () => ({
+  db: mockDb,
+}));
+
+const { default: app } = await import("../../../../app.js");
+
 const token = jwt.sign({ id: "u1" }, SECRET);
 const auth = { Authorization: `Bearer ${token}` };
 
@@ -68,16 +69,6 @@ const validBody = {
 };
 
 describe("Restaurant API", () => {
-  const originalSecret = process.env.JWT_SECRET;
-
-  beforeAll(() => {
-    process.env.JWT_SECRET = SECRET;
-  });
-
-  afterAll(() => {
-    process.env.JWT_SECRET = originalSecret;
-  });
-
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -232,12 +223,12 @@ describe("Restaurant API", () => {
         .set(auth)
         .send({ ...validBody, ownerId: "hacker", slug: "x", status: "OPEN" });
 
-      const data = mockDb.restaurant.create.mock.calls[0]![0] as {
+      const arg = mockDb.restaurant.create.mock.calls[0]![0] as {
         data: Record<string, unknown>;
       };
-      expect(data.data.ownerId).toBe("u1");
-      expect(data.data.slug).toBe("spice-garden");
-      expect(data.data).not.toHaveProperty("status");
+      expect(arg.data.ownerId).toBe("u1");
+      expect(arg.data.slug).toBe("spice-garden");
+      expect(arg.data).not.toHaveProperty("status");
     });
 
     it("returns 409 when the owner already has a restaurant", async () => {
