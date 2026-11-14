@@ -22,4 +22,6 @@ model Restaurant {
   status         RestaurantStatus @default(INACTIVE)
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
+  menuCategories MenuCategory[]
+  menuItems      MenuItem[]
 }
