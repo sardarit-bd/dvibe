@@ -5,7 +5,14 @@ import type {
   PublicRestaurant,
   UpdateRestaurantInput,
 } from "./restaurantTypes.js";
-
+import { Prisma } from "../../../generated/prisma/client.js";
+const toJson = (
+  value: Record<string, string> | null | undefined,
+): Prisma.InputJsonValue | typeof Prisma.JsonNull | undefined => {
+  if (value === undefined) return undefined;
+  if (value === null) return Prisma.JsonNull;
+  return value;
+};
 const publicSelect = {
   id: true,
   name: true,
@@ -59,14 +66,23 @@ export const findBySlug = async (
 export const createRestaurant = async (
   data: CreateRestaurantData,
 ): Promise<PartnerRestaurant> => {
-  return db.restaurant.create({ data });
+  const { openingHours, ...rest } = data;
+
+  return db.restaurant.create({
+    data: { ...rest, openingHours: toJson(openingHours) },
+  });
 };
 
 export const updateByOwnerId = async (
   ownerId: string,
   data: UpdateRestaurantInput,
 ): Promise<PartnerRestaurant> => {
-  return db.restaurant.update({ where: { ownerId }, data });
+  const { openingHours, ...rest } = data;
+
+  return db.restaurant.update({
+    where: { ownerId },
+    data: { ...rest, openingHours: toJson(openingHours) },
+  });
 };
 
 export const updateStatusByOwnerId = async (

@@ -1,4 +1,3 @@
-
 import type { Config } from "jest";
 
 const config: Config = {
@@ -10,9 +9,7 @@ const config: Config = {
 
   rootDir: ".",
 
-  testMatch: [
-    "<rootDir>/src/**/tests/**/*.test.ts",
-  ],
+  testMatch: ["<rootDir>/src/**/tests/**/*.test.ts"],
 
   transform: {
     "^.+\\.tsx?$": [
@@ -20,6 +17,7 @@ const config: Config = {
       {
         useESM: true,
         tsconfig: "tsconfig.json",
+        diagnostics: { ignoreCodes: [151002] },
       },
     ],
   },
