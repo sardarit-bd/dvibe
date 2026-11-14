@@ -1,17 +1,37 @@
-import { jest } from "@jest/globals";
-import * as restaurantRepository from "../../restaurantRepository.js";
 import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  jest,
+} from "@jest/globals";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyAsyncFn = (...args: any[]) => Promise<any>;
+const mockFn = () => jest.fn<AnyAsyncFn>();
+
+const repo = {
+  findAllPublic: mockFn(),
+  findPublicById: mockFn(),
+  findByOwnerId: mockFn(),
+  findBySlug: mockFn(),
+  createRestaurant: mockFn(),
+  updateByOwnerId: mockFn(),
+  updateStatusByOwnerId: mockFn(),
+};
+
+jest.unstable_mockModule("../../restaurantRepository.js", () => ({
+  ...repo,
+}));
+
+const {
   createPartnerRestaurant,
   getPartnerRestaurant,
   getPublicRestaurantById,
   getPublicRestaurants,
   updatePartnerRestaurant,
   updatePartnerRestaurantStatus,
-} from "../../restaurantService.js";
-
-jest.mock("../../restaurantRepository.js");
-
-const repo = restaurantRepository as jest.Mocked<typeof restaurantRepository>;
+} = await import("../../restaurantService.js");
 
 const input = {
   name: "Spice Garden",
@@ -26,17 +46,15 @@ describe("restaurantService", () => {
 
   describe("getPublicRestaurants", () => {
     it("returns the list from the repository", async () => {
-      repo.findAllPublic.mockResolvedValue([{ id: "r1" }] as never);
+      repo.findAllPublic.mockResolvedValue([{ id: "r1" }]);
 
-      const result = await getPublicRestaurants();
-
-      expect(result).toEqual([{ id: "r1" }]);
+      await expect(getPublicRestaurants()).resolves.toEqual([{ id: "r1" }]);
     });
   });
 
   describe("getPublicRestaurantById", () => {
     it("returns the restaurant when found", async () => {
-      repo.findPublicById.mockResolvedValue({ id: "r1" } as never);
+      repo.findPublicById.mockResolvedValue({ id: "r1" });
 
       await expect(getPublicRestaurantById("r1")).resolves.toEqual({
         id: "r1",
@@ -55,7 +73,7 @@ describe("restaurantService", () => {
 
   describe("getPartnerRestaurant", () => {
     it("returns the owner's restaurant", async () => {
-      repo.findByOwnerId.mockResolvedValue({ id: "r1" } as never);
+      repo.findByOwnerId.mockResolvedValue({ id: "r1" });
 
       await expect(getPartnerRestaurant("u1")).resolves.toEqual({ id: "r1" });
     });
@@ -71,7 +89,7 @@ describe("restaurantService", () => {
 
   describe("createPartnerRestaurant", () => {
     it("throws 409 when the owner already has a restaurant", async () => {
-      repo.findByOwnerId.mockResolvedValue({ id: "r1" } as never);
+      repo.findByOwnerId.mockResolvedValue({ id: "r1" });
 
       await expect(createPartnerRestaurant("u1", input)).rejects.toMatchObject(
         { statusCode: 409 },
@@ -82,7 +100,7 @@ describe("restaurantService", () => {
     it("creates a restaurant with a generated slug", async () => {
       repo.findByOwnerId.mockResolvedValue(null);
       repo.findBySlug.mockResolvedValue(null);
-      repo.createRestaurant.mockResolvedValue({ id: "r1" } as never);
+      repo.createRestaurant.mockResolvedValue({ id: "r1" });
 
       await createPartnerRestaurant("u1", input);
 
@@ -100,7 +118,7 @@ describe("restaurantService", () => {
       repo.findBySlug
         .mockResolvedValueOnce({ id: "other" })
         .mockResolvedValueOnce(null);
-      repo.createRestaurant.mockResolvedValue({ id: "r1" } as never);
+      repo.createRestaurant.mockResolvedValue({ id: "r1" });
 
       await createPartnerRestaurant("u1", input);
 
@@ -111,7 +129,7 @@ describe("restaurantService", () => {
     it("falls back to 'restaurant' when the name has no usable characters", async () => {
       repo.findByOwnerId.mockResolvedValue(null);
       repo.findBySlug.mockResolvedValue(null);
-      repo.createRestaurant.mockResolvedValue({ id: "r1" } as never);
+      repo.createRestaurant.mockResolvedValue({ id: "r1" });
 
       await createPartnerRestaurant("u1", { ...input, name: "!!!" });
 
@@ -132,8 +150,8 @@ describe("restaurantService", () => {
     });
 
     it("updates and returns the restaurant", async () => {
-      repo.findByOwnerId.mockResolvedValue({ id: "r1" } as never);
-      repo.updateByOwnerId.mockResolvedValue({ id: "r1", phone: "1" } as never);
+      repo.findByOwnerId.mockResolvedValue({ id: "r1" });
+      repo.updateByOwnerId.mockResolvedValue({ id: "r1", phone: "1" });
 
       const result = await updatePartnerRestaurant("u1", { phone: "1" });
 
@@ -152,11 +170,11 @@ describe("restaurantService", () => {
     });
 
     it("updates the status", async () => {
-      repo.findByOwnerId.mockResolvedValue({ id: "r1" } as never);
+      repo.findByOwnerId.mockResolvedValue({ id: "r1" });
       repo.updateStatusByOwnerId.mockResolvedValue({
         id: "r1",
         status: "OPEN",
-      } as never);
+      });
 
       await updatePartnerRestaurantStatus("u1", { status: "OPEN" });
 
