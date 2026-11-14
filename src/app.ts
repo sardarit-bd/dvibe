@@ -7,7 +7,12 @@ import errorHandler from "./shared/errors/errorHandler.js";
 import swaggerUi from "swagger-ui-express";
 import authRoutes from "./modules/auth/authRoutes.js";
 import swaggerSpec from "./config/swagger.js";
-import restaurantRoutes, { partnerRouter as partnerRestaurantRoutes,} from "./modules/restaurant/restaurantRoutes.js";
+import restaurantRoutes, {
+  partnerRouter as partnerRestaurantRoutes,
+} from "./modules/restaurant/restaurantRoutes.js";
+import menuPublicRoutes, {
+  partnerRouter as partnerMenuRoutes,
+} from "./modules/menu/menuRoutes.js";
 const app: Application = express();
 app.use(httpLogger);
 app.use(
@@ -86,7 +91,9 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/restaurants", menuPublicRoutes);
 app.use("/api/partner/restaurant", partnerRestaurantRoutes);
+app.use("/api/partner/menu", partnerMenuRoutes);
 app.use(errorHandler);
 
 export default app;
