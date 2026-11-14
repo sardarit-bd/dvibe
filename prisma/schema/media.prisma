@@ -1,0 +1,30 @@
+model Media {
+  id           String     @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  menuItemId   String?
+  menuItem     MenuItem?  @relation(fields: [menuItemId], references: [id], onDelete: SetNull)
+  url          String
+  storageKey   String
+  fileName     String
+  fileType     String
+  fileSize     Int
+  createdAt    DateTime   @default(now())
+
+  restaurantPhoto RestaurantPhoto?
+
+  @@index([restaurantId])
+  @@index([menuItemId])
+}
+
+model RestaurantPhoto {
+  id           String     @id @default(uuid())
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  mediaId      String     @unique
+  media        Media      @relation(fields: [mediaId], references: [id], onDelete: Restrict)
+  sortOrder    Int        @default(0)
+  createdAt    DateTime   @default(now())
+
+  @@index([restaurantId])
+}
