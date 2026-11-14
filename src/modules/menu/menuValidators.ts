@@ -58,7 +58,9 @@ const priceField = yup
   .test(
     "max-2-decimals",
     "Price can have at most 2 decimal places",
-    (value) => value === undefined || /^\d+(\.\d{1,2})?$/.test(String(value)),
+    (value) =>
+      value === undefined ||
+      Math.abs(Math.round(value * 100) - value * 100) < 1e-6,
   );
 
 const atLeastOne = (value: object | undefined): boolean =>
