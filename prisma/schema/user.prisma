@@ -4,11 +4,12 @@ enum UserRole {
 }
 
 model User {
-  id         String      @id @default(uuid())
-  name       String
-  email      String      @unique
-  password   String
-  role       UserRole    @default(user)
-  restaurant Restaurant?
-  orders     Order[]
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         UserRole      @default(user)
+  restaurant   Restaurant?
+  orders       Order[]
+  reservations Reservation[]
 }
