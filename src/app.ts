@@ -16,6 +16,9 @@ import menuPublicRoutes, {
 import mediaRoutes, {
   partnerPhotoRouter as partnerPhotoRoutes,
 } from "./modules/media/mediaRoutes.js";
+import orderRoutes, {
+  partnerRouter as partnerOrderRoutes,
+} from "./modules/order/orderRoutes.js";
 import { getUploadDir } from "./modules/media/mediaStorage.js";
 const app: Application = express();
 app.use(httpLogger);
@@ -109,6 +112,8 @@ app.use("/api/media", mediaRoutes);
 app.use("/api/partner/restaurant/photos", partnerPhotoRoutes);
 app.use("/api/partner/restaurant", partnerRestaurantRoutes);
 app.use("/api/partner/menu", partnerMenuRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/partner/orders", partnerOrderRoutes);
 app.use(errorHandler);
 
 export default app;
