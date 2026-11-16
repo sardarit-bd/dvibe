@@ -22,6 +22,11 @@ import orderRoutes, {
 import reservationRoutes, {
   partnerRouter as partnerReservationRoutes,
 } from "./modules/reservation/reservationRoutes.js";
+import driverRoutes, {
+  taxiRequestRouter as taxiRequestRoutes,
+  partnerTaxiRequestRouter as partnerTaxiRequestRoutes,
+  partnerDriverRouter as partnerDriverRoutes,
+} from "./modules/taxi/taxiRoutes.js";
 import { getUploadDir } from "./modules/media/mediaStorage.js";
 const app: Application = express();
 app.use(httpLogger);
@@ -119,6 +124,10 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/partner/orders", partnerOrderRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/partner/reservations", partnerReservationRoutes);
+app.use("/api/drivers", driverRoutes);
+app.use("/api/taxi-requests", taxiRequestRoutes);
+app.use("/api/partner/taxi-requests", partnerTaxiRequestRoutes);
+app.use("/api/partner/drivers", partnerDriverRoutes);
 app.use(errorHandler);
 
 export default app;
