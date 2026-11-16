@@ -38,9 +38,9 @@ const mockStorage = new Proxy<Record<string, any>>(
     get: (_target, prop: string) => {
       // Default to resolving undefined, but customize known functions as needed
       if (prop === "hasValidImageSignature") {
-        return jest.fn().mockResolvedValue(true);
+        return jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
       }
-      return jest.fn().mockResolvedValue(undefined);
+      return jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
     },
   },
 );
