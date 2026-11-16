@@ -12,4 +12,5 @@ model User {
   restaurant   Restaurant?
   orders       Order[]
   reservations Reservation[]
+  taxiRequests TaxiRequest[]
 }
