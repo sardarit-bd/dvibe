@@ -21,6 +21,7 @@ model MenuItem {
   categoryId   String
   category     MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   media        Media[]
+  orderItems   OrderItem[]
   name         String
   description  String?
   price        Decimal      @db.Decimal(10, 2)

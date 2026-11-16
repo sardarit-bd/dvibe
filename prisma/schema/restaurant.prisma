@@ -26,4 +26,5 @@ model Restaurant {
   menuItems      MenuItem[]
   media          Media[]
   photos         RestaurantPhoto[]
+  orders         Order[]
 }
