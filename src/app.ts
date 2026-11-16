@@ -13,8 +13,21 @@ import restaurantRoutes, {
 import menuPublicRoutes, {
   partnerRouter as partnerMenuRoutes,
 } from "./modules/menu/menuRoutes.js";
+import mediaRoutes, {
+  partnerPhotoRouter as partnerPhotoRoutes,
+} from "./modules/media/mediaRoutes.js";
+import { getUploadDir } from "./modules/media/mediaStorage.js";
 const app: Application = express();
 app.use(httpLogger);
+app.use(
+  "/uploads",
+  (_req, res, next) => {
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    next();
+  },
+  express.static(getUploadDir(), { dotfiles: "deny", index: false }),
+);
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -92,6 +105,8 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/restaurants", menuPublicRoutes);
+app.use("/api/media", mediaRoutes);
+app.use("/api/partner/restaurant/photos", partnerPhotoRoutes);
 app.use("/api/partner/restaurant", partnerRestaurantRoutes);
 app.use("/api/partner/menu", partnerMenuRoutes);
 app.use(errorHandler);

@@ -11,7 +11,13 @@ export const getAll = async (
 ): Promise<void> => {
   try {
     const restaurants = await restaurantService.getPublicRestaurants();
-    sendResponse(res, 200, true, "Restaurants fetched successfully", restaurants);
+    sendResponse(
+      res,
+      200,
+      true,
+      "Restaurants fetched successfully",
+      restaurants,
+    );
   } catch (error) {
     next(error);
   }

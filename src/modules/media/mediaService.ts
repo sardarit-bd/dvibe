@@ -31,10 +31,7 @@ export const uploadMedia = async (
 
   const restaurantId = await getOwnerRestaurantId(ownerId);
 
-  const validSignature = await hasValidImageSignature(
-    file.path,
-    file.mimetype,
-  );
+  const validSignature = await hasValidImageSignature(file.path, file.mimetype);
 
   if (!validSignature) {
     throw new AppError("File content does not match its image type", 400);

@@ -104,8 +104,7 @@ export const updateRestaurantSchema = yup
   .test(
     "at-least-one-field",
     "At least one field is required",
-    (value) =>
-      !!value && Object.values(value).some((v) => v !== undefined),
+    (value) => !!value && Object.values(value).some((v) => v !== undefined),
   );
 
 export const updateStatusSchema = yup.object({
