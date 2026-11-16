@@ -1,0 +1,45 @@
+enum TaxiRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+model Driver {
+  id             String        @id @default(uuid())
+  name           String
+  phone          String
+  whatsappNumber String
+  serviceArea    String
+  vehicleType    String
+  vehicleDetails String?
+  profileImage   String?
+  isAvailable    Boolean       @default(true)
+  taxiRequests   TaxiRequest[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([isAvailable, serviceArea])
+  @@index([vehicleType])
+}
+
+model TaxiRequest {
+  id             String            @id @default(uuid())
+  driverId       String
+  driver         Driver            @relation(fields: [driverId], references: [id], onDelete: Restrict)
+  customerId     String?
+  customer       User?             @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerName   String
+  customerPhone  String
+  pickupLocation String
+  destination    String
+  notes          String?
+  status         TaxiRequestStatus @default(PENDING)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  @@index([driverId, status])
+  @@index([customerId])
+  @@index([status, createdAt])
+}
