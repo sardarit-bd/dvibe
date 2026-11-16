@@ -38,8 +38,10 @@ describe("createReservationSchema", () => {
   });
 
   it("accepts a missing or null special request", async () => {
-    const { specialRequest: _specialRequest, ...withoutRequest } =
-      validReservation;
+    const withoutRequest: Partial<typeof validReservation> = {
+      ...validReservation,
+    };
+    delete withoutRequest.specialRequest;
 
     expect(await errorsOf(createReservationSchema, withoutRequest)).toEqual([]);
     expect(
