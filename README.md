@@ -13,13 +13,17 @@ DVIBE web application built with Node.js, Express.js, TypeScript, PostgreSQL, an
 * Pino, Swagger
 * nodemon, tsx
 
+## API Documentation
+```bash
+https://api.dvibe.sardarit.cloud/api-docs/
+```
 ## Setup Instructions
 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/shahinsamiur/express_template.git
-cd express_template
+git clone https://github.com/sardarit-bd/dvibe.git
+cd dvibe
 ```
 
 ### 2. Install Dependencies
