@@ -27,6 +27,10 @@ import driverRoutes, {
   partnerTaxiRequestRouter as partnerTaxiRequestRoutes,
   partnerDriverRouter as partnerDriverRoutes,
 } from "./modules/taxi/taxiRoutes.js";
+import languageRoutes, {
+  translationRouter as translationRoutes,
+  adminTranslationRouter as adminTranslationRoutes,
+} from "./modules/language/languageRoutes.js";
 import { getUploadDir } from "./modules/media/mediaStorage.js";
 const app: Application = express();
 app.use(httpLogger);
@@ -128,6 +132,9 @@ app.use("/api/drivers", driverRoutes);
 app.use("/api/taxi-requests", taxiRequestRoutes);
 app.use("/api/partner/taxi-requests", partnerTaxiRequestRoutes);
 app.use("/api/partner/drivers", partnerDriverRoutes);
+app.use("/api/languages", languageRoutes);
+app.use("/api/translations", translationRoutes);
+app.use("/api/admin/translations", adminTranslationRoutes);
 app.use(errorHandler);
 
 export default app;
