@@ -31,6 +31,8 @@ import languageRoutes, {
   translationRouter as translationRoutes,
   adminTranslationRouter as adminTranslationRoutes,
 } from "./modules/language/languageRoutes.js";
+import eventRoutes from "./modules/event/eventRoutes.js";
+import vibeRoutes from "./modules/vibe/vibeRoutes.js";
 import { getUploadDir } from "./modules/media/mediaStorage.js";
 const app: Application = express();
 app.use(httpLogger);
@@ -135,6 +137,8 @@ app.use("/api/partner/drivers", partnerDriverRoutes);
 app.use("/api/languages", languageRoutes);
 app.use("/api/translations", translationRoutes);
 app.use("/api/admin/translations", adminTranslationRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/vibes", vibeRoutes);
 app.use(errorHandler);
 
 export default app;
