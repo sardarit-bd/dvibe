@@ -445,10 +445,6 @@ export type MenuCategoryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type MenuCategoryCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.MenuCategoryCreateWithoutItemsInput, Prisma.MenuCategoryUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.MenuCategoryCreateOrConnectWithoutItemsInput

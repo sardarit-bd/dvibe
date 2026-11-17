@@ -8,6 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Language.js'
+export type * from './models/Translation.js'
 export type * from './models/Media.js'
 export type * from './models/RestaurantPhoto.js'
 export type * from './models/MenuCategory.js'
