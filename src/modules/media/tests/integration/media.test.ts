@@ -35,7 +35,13 @@ jest.unstable_mockModule("../../../../config/database/index.js", () => ({
 const mockStorage = new Proxy<Record<string, any>>(
   {},
   {
-    get: (_target, prop: string) => {
+    get: (_target, prop: string | symbol) => {
+      // Jest awaits the module factory's result. Returning a function for
+      // "then" makes this Proxy a thenable that never resolves, which hangs
+      // the suite at load time.
+      if (prop === "then" || typeof prop === "symbol") {
+        return undefined;
+      }
       // Default to resolving undefined, but customize known functions as needed
       if (prop === "hasValidImageSignature") {
         return jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
