@@ -1,0 +1,46 @@
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+}
+
+enum VibeStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum VibeCategory {
+  EVENT
+  LIVE_MUSIC
+  NIGHTLIFE
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  title       String
+  description String?
+  location    String
+  eventDate   DateTime    @db.Date
+  startTime   String
+  endTime     String?
+  image       String?
+  status      EventStatus @default(PUBLISHED)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([status, eventDate])
+}
+
+model Vibe {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  category    VibeCategory
+  image       String?
+  location    String?
+  status      VibeStatus   @default(PUBLISHED)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([status, category])
+}
