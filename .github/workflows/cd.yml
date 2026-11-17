@@ -51,8 +51,8 @@ jobs:
           script: |
             set -e
 
-            if [ -z "$DEPLOY_PATH" ]; then
-              echo "DEPLOY_PATH is missing"
+            if [ -z "$DEPLOY_PATH" ] || [ -z "$DEPLOY_SHA" ]; then
+              echo "DEPLOY_PATH or DEPLOY_SHA is missing"
               exit 1
             fi
 
@@ -62,19 +62,29 @@ jobs:
             git fetch origin "$DEPLOY_SHA"
             git reset --hard "$DEPLOY_SHA"
 
-            echo "Deploying with Docker..."
+            echo "Building Docker image..."
+            docker compose -f docker-compose.prod.yml build api
 
-            if [ ! -f docker-compose.prod.yml ]; then
-              echo "docker-compose.prod.yml not found"
-              exit 1
-            fi
+            echo "Synchronizing Prisma schema..."
+            docker compose -f docker-compose.prod.yml run --rm --no-deps api ./node_modules/.bin/prisma db push
 
-            docker compose \
-              -f docker-compose.prod.yml \
-              up -d --build --remove-orphans
+            echo "Starting DVIBE API..."
+            docker compose -f docker-compose.prod.yml up -d --no-build --no-deps api
 
-            docker compose \
-              -f docker-compose.prod.yml \
-              ps
+            echo "Waiting for API health..."
+            i=1
+            while [ "$i" -le 30 ]; do
+              if docker exec dvibe-api node -e 'fetch("http://127.0.0.1:5000/").then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))' >/dev/null 2>&1; then
+                echo "DVIBE API is healthy!"
+                docker compose -f docker-compose.prod.yml ps
+                exit 0
+              fi
 
-            echo "Docker deployment completed!"
+              sleep 2
+              i=$((i + 1))
+            done
+
+            echo "DVIBE API health check failed"
+            docker compose -f docker-compose.prod.yml ps
+            docker logs --tail 100 dvibe-api
+            exit 1
