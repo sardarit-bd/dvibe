@@ -9,6 +9,32 @@
 * 🟢 You can import this file directly.
 */
 
+export const EventStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type EventStatus = (typeof EventStatus)[keyof typeof EventStatus]
+
+
+export const VibeStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED'
+} as const
+
+export type VibeStatus = (typeof VibeStatus)[keyof typeof VibeStatus]
+
+
+export const VibeCategory = {
+  EVENT: 'EVENT',
+  LIVE_MUSIC: 'LIVE_MUSIC',
+  NIGHTLIFE: 'NIGHTLIFE'
+} as const
+
+export type VibeCategory = (typeof VibeCategory)[keyof typeof VibeCategory]
+
+
 export const OrderStatus = {
   PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',

@@ -471,10 +471,6 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type MediaCreateNestedOneWithoutRestaurantPhotoInput = {
   create?: Prisma.XOR<Prisma.MediaCreateWithoutRestaurantPhotoInput, Prisma.MediaUncheckedCreateWithoutRestaurantPhotoInput>
   connectOrCreate?: Prisma.MediaCreateOrConnectWithoutRestaurantPhotoInput

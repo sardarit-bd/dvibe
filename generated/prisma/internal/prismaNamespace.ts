@@ -397,6 +397,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  Event: 'Event',
+  Vibe: 'Vibe',
   Language: 'Language',
   Translation: 'Translation',
   Media: 'Media',
@@ -425,10 +427,158 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "language" | "translation" | "media" | "restaurantPhoto" | "menuCategory" | "menuItem" | "order" | "orderItem" | "reservation" | "restaurant" | "driver" | "taxiRequest" | "user"
+    modelProps: "event" | "vibe" | "language" | "translation" | "media" | "restaurantPhoto" | "menuCategory" | "menuItem" | "order" | "orderItem" | "reservation" | "restaurant" | "driver" | "taxiRequest" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    Event: {
+      payload: Prisma.$EventPayload<ExtArgs>
+      fields: Prisma.EventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        findFirst: {
+          args: Prisma.EventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        findMany: {
+          args: Prisma.EventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>[]
+        }
+        create: {
+          args: Prisma.EventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        createMany: {
+          args: Prisma.EventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>[]
+        }
+        delete: {
+          args: Prisma.EventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        update: {
+          args: Prisma.EventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        deleteMany: {
+          args: Prisma.EventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>[]
+        }
+        upsert: {
+          args: Prisma.EventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EventPayload>
+        }
+        aggregate: {
+          args: Prisma.EventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEvent>
+        }
+        groupBy: {
+          args: Prisma.EventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EventCountAggregateOutputType> | number
+        }
+      }
+    }
+    Vibe: {
+      payload: Prisma.$VibePayload<ExtArgs>
+      fields: Prisma.VibeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VibeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VibeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        findFirst: {
+          args: Prisma.VibeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VibeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        findMany: {
+          args: Prisma.VibeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>[]
+        }
+        create: {
+          args: Prisma.VibeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        createMany: {
+          args: Prisma.VibeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.VibeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>[]
+        }
+        delete: {
+          args: Prisma.VibeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        update: {
+          args: Prisma.VibeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        deleteMany: {
+          args: Prisma.VibeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VibeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.VibeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>[]
+        }
+        upsert: {
+          args: Prisma.VibeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VibePayload>
+        }
+        aggregate: {
+          args: Prisma.VibeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVibe>
+        }
+        groupBy: {
+          args: Prisma.VibeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VibeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VibeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VibeCountAggregateOutputType> | number
+        }
+      }
+    }
     Language: {
       payload: Prisma.$LanguagePayload<ExtArgs>
       fields: Prisma.LanguageFieldRefs
@@ -1430,6 +1580,38 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const EventScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  eventDate: 'eventDate',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  image: 'image',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+export const VibeScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  image: 'image',
+  location: 'location',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VibeScalarFieldEnum = (typeof VibeScalarFieldEnum)[keyof typeof VibeScalarFieldEnum]
+
+
 export const LanguageScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -1689,13 +1871,6 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -1706,6 +1881,55 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EventStatus'
+ */
+export type EnumEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'EventStatus[]'
+ */
+export type ListEnumEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EventStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'VibeCategory'
+ */
+export type EnumVibeCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VibeCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'VibeCategory[]'
+ */
+export type ListEnumVibeCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VibeCategory[]'>
+    
+
+
+/**
+ * Reference to a field of type 'VibeStatus'
+ */
+export type EnumVibeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VibeStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'VibeStatus[]'
+ */
+export type ListEnumVibeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VibeStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1999,6 +2223,8 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
+  event?: Prisma.EventOmit
+  vibe?: Prisma.VibeOmit
   language?: Prisma.LanguageOmit
   translation?: Prisma.TranslationOmit
   media?: Prisma.MediaOmit

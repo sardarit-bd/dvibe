@@ -8,6 +8,8 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/Event.js'
+export type * from './models/Vibe.js'
 export type * from './models/Language.js'
 export type * from './models/Translation.js'
 export type * from './models/Media.js'

@@ -51,6 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Event: 'Event',
+  Vibe: 'Vibe',
   Language: 'Language',
   Translation: 'Translation',
   Media: 'Media',
@@ -80,6 +82,38 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const EventScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  location: 'location',
+  eventDate: 'eventDate',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  image: 'image',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EventScalarFieldEnum = (typeof EventScalarFieldEnum)[keyof typeof EventScalarFieldEnum]
+
+
+export const VibeScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  image: 'image',
+  location: 'location',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type VibeScalarFieldEnum = (typeof VibeScalarFieldEnum)[keyof typeof VibeScalarFieldEnum]
 
 
 export const LanguageScalarFieldEnum = {

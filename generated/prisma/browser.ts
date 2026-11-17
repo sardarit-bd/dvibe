@@ -18,6 +18,16 @@ export { Prisma }
 export * as $Enums from './enums.js'
 export * from './enums.js';
 /**
+ * Model Event
+ * 
+ */
+export type Event = Prisma.EventModel
+/**
+ * Model Vibe
+ * 
+ */
+export type Vibe = Prisma.VibeModel
+/**
  * Model Language
  * 
  */

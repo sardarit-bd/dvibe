@@ -339,16 +339,8 @@ export type LanguageScalarRelationFilter = {
   isNot?: Prisma.LanguageWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
 }
 
 export type LanguageCreateNestedOneWithoutTranslationsInput = {
