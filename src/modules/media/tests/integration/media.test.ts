@@ -31,27 +31,40 @@ jest.unstable_mockModule("../../../../config/database/index.js", () => ({
   db: mockDb,
 }));
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockStorage = new Proxy<Record<string, any>>(
-  {},
-  {
-    get: (_target, prop: string | symbol) => {
-      // Jest awaits the module factory's result. Returning a function for
-      // "then" makes this Proxy a thenable that never resolves, which hangs
-      // the suite at load time.
-      if (prop === "then" || typeof prop === "symbol") {
-        return undefined;
-      }
-      // Default to resolving undefined, but customize known functions as needed
-      if (prop === "hasValidImageSignature") {
-        return jest.fn<() => Promise<boolean>>().mockResolvedValue(true);
-      }
-      return jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
-    },
-  },
-);
+const hasValidImageSignature = jest.fn<AnyFn>();
+const removeFile = jest.fn<AnyFn>();
 
-jest.unstable_mockModule("../../mediaStorage.js", () => mockStorage);
+// Explicit mock of mediaStorage: no real multer / disk access.
+// uploadSingleImage mimics multer: it sets req.file for multipart requests
+// and always leaves req.body as an object.
+jest.unstable_mockModule("../../mediaStorage.js", () => ({
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
+  getUploadDir: () => "uploads",
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  uploadSingleImage: (req: any, _res: unknown, next: () => void) => {
+    const contentType = String(req.headers["content-type"] ?? "");
+    if (contentType.includes("multipart/form-data")) {
+      req.file = {
+        path: "uploads/stored.jpg",
+        filename: "stored.jpg",
+        originalname: "test.jpg",
+        mimetype: "image/jpeg",
+        size: 4,
+      };
+    }
+    req.body = req.body ?? {};
+    next();
+  },
+  // 4 parameters so Express treats it as an error-handling middleware
+  cleanupUploadOnError: (
+    error: unknown,
+    _req: unknown,
+    _res: unknown,
+    next: (error?: unknown) => void,
+  ) => next(error),
+  hasValidImageSignature,
+  removeFile,
+}));
 
 const { default: app } = await import("../../../../app.js");
 
@@ -74,22 +87,27 @@ const asOwnerWithRestaurant = (): void => {
 describe("Media API", () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    hasValidImageSignature.mockResolvedValue(true);
+    removeFile.mockResolvedValue(true);
   });
 
-  describe("POST /api/partner/media", () => {
+  describe("POST /api/media/upload", () => {
     it("returns 401 without a token", async () => {
       const res = await request(app)
-        .post("/api/partner/media")
+        .post("/api/media/upload")
         .attach("file", Buffer.from("test"), "test.jpg");
+
       expect(res.status).toBe(401);
     });
 
     it("returns 403 for a CUSTOMER", async () => {
       asRole("CUSTOMER");
+
       const res = await request(app)
-        .post("/api/partner/media")
+        .post("/api/media/upload")
         .set(auth)
         .attach("file", Buffer.from("test"), "test.jpg");
+
       expect(res.status).toBe(403);
     });
 
@@ -99,7 +117,7 @@ describe("Media API", () => {
         id: "m1",
         restaurantId: "r1",
         menuItemId: null,
-        url: "/uploads/test.jpg",
+        url: "/uploads/stored.jpg",
         fileName: "test.jpg",
         fileType: "image/jpeg",
         fileSize: 4,
@@ -107,7 +125,7 @@ describe("Media API", () => {
       });
 
       const res = await request(app)
-        .post("/api/partner/media")
+        .post("/api/media/upload")
         .set(auth)
         .attach("file", Buffer.from("test"), "test.jpg");
 
@@ -119,17 +137,45 @@ describe("Media API", () => {
           data: expect.objectContaining({
             restaurantId: "r1",
             fileName: "test.jpg",
+            storageKey: "stored.jpg",
           }),
         }),
       );
     });
 
-    it("returns 404 when owner has no restaurant", async () => {
+    it("returns 400 when no file is sent", async () => {
+      asOwnerWithRestaurant();
+
+      const res = await request(app)
+        .post("/api/media/upload")
+        .set(auth)
+        .send({});
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe("File is required");
+      expect(mockDb.media.create).not.toHaveBeenCalled();
+    });
+
+    it("returns 400 when the file content does not match its type", async () => {
+      asOwnerWithRestaurant();
+      hasValidImageSignature.mockResolvedValue(false);
+
+      const res = await request(app)
+        .post("/api/media/upload")
+        .set(auth)
+        .attach("file", Buffer.from("test"), "test.jpg");
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe("File content does not match its image type");
+      expect(mockDb.media.create).not.toHaveBeenCalled();
+    });
+
+    it("returns 404 when the owner has no restaurant", async () => {
       asRole("RESTAURANT_OWNER");
       mockDb.restaurant.findUnique.mockResolvedValue(null);
 
       const res = await request(app)
-        .post("/api/partner/media")
+        .post("/api/media/upload")
         .set(auth)
         .attach("file", Buffer.from("test"), "test.jpg");
 
@@ -161,7 +207,7 @@ describe("Media API", () => {
     });
   });
 
-  describe("DELETE /api/partner/media/:id", () => {
+  describe("DELETE /api/media/:id", () => {
     it("deletes media successfully", async () => {
       asOwnerWithRestaurant();
       mockDb.media.findFirst.mockResolvedValue({
@@ -171,18 +217,19 @@ describe("Media API", () => {
       mockDb.restaurantPhoto.findUnique.mockResolvedValue(null);
       mockDb.media.delete.mockResolvedValue({ id: "m1" });
 
-      const res = await request(app).delete("/api/partner/media/m1").set(auth);
+      const res = await request(app).delete("/api/media/m1").set(auth);
 
       expect(res.status).toBe(200);
       expect(res.body.message).toBe("Media deleted successfully");
       expect(mockDb.media.delete).toHaveBeenCalledWith({ where: { id: "m1" } });
+      expect(removeFile).toHaveBeenCalledWith("test.jpg");
     });
 
     it("returns 404 when media is not found", async () => {
       asOwnerWithRestaurant();
       mockDb.media.findFirst.mockResolvedValue(null);
 
-      const res = await request(app).delete("/api/partner/media/m1").set(auth);
+      const res = await request(app).delete("/api/media/m1").set(auth);
 
       expect(res.status).toBe(404);
     });
@@ -195,14 +242,15 @@ describe("Media API", () => {
       });
       mockDb.restaurantPhoto.findUnique.mockResolvedValue({ id: "p1" });
 
-      const res = await request(app).delete("/api/partner/media/m1").set(auth);
+      const res = await request(app).delete("/api/media/m1").set(auth);
 
       expect(res.status).toBe(409);
       expect(res.body.message).toBe("Media is in use");
+      expect(mockDb.media.delete).not.toHaveBeenCalled();
     });
   });
 
-  describe("POST /api/partner/media/photos", () => {
+  describe("POST /api/partner/restaurant/photos", () => {
     it("adds a photo successfully", async () => {
       asOwnerWithRestaurant();
       mockDb.media.findFirst.mockResolvedValue({ id: "m1" });
@@ -220,7 +268,7 @@ describe("Media API", () => {
       });
 
       const res = await request(app)
-        .post("/api/partner/media/photos")
+        .post("/api/partner/restaurant/photos")
         .set(auth)
         .send({ mediaId: "m1", sortOrder: 1 });
 
@@ -234,7 +282,7 @@ describe("Media API", () => {
       mockDb.restaurantPhoto.findUnique.mockResolvedValue({ id: "p1" });
 
       const res = await request(app)
-        .post("/api/partner/media/photos")
+        .post("/api/partner/restaurant/photos")
         .set(auth)
         .send({ mediaId: "m1" });
 
@@ -246,7 +294,7 @@ describe("Media API", () => {
       asOwnerWithRestaurant();
 
       const res = await request(app)
-        .post("/api/partner/media/photos")
+        .post("/api/partner/restaurant/photos")
         .set(auth)
         .send({});
 
@@ -255,14 +303,14 @@ describe("Media API", () => {
     });
   });
 
-  describe("DELETE /api/partner/media/photos/:id", () => {
+  describe("DELETE /api/partner/restaurant/photos/:id", () => {
     it("removes a photo successfully", async () => {
       asOwnerWithRestaurant();
       mockDb.restaurantPhoto.findFirst.mockResolvedValue({ id: "p1" });
       mockDb.restaurantPhoto.delete.mockResolvedValue({ id: "p1" });
 
       const res = await request(app)
-        .delete("/api/partner/media/photos/p1")
+        .delete("/api/partner/restaurant/photos/p1")
         .set(auth);
 
       expect(res.status).toBe(200);
@@ -277,7 +325,7 @@ describe("Media API", () => {
       mockDb.restaurantPhoto.findFirst.mockResolvedValue(null);
 
       const res = await request(app)
-        .delete("/api/partner/media/photos/p1")
+        .delete("/api/partner/restaurant/photos/p1")
         .set(auth);
 
       expect(res.status).toBe(404);
